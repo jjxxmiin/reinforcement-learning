@@ -1,0 +1,44 @@
+2020-05-08 15:51:46,639 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 13900 
+SUCCESS                 : 920 
+FAIL                    : 80
+2020-05-08 16:34:04,705 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 18906 
+SUCCESS                 : 942 
+FAIL                    : 58
+2020-05-08 16:56:39,055 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 13614 
+SUCCESS                 : 938 
+FAIL                    : 62
+2020-05-08 17:12:06,706 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 6807 
+SUCCESS                 : 939 
+FAIL                    : 61
+2020-05-08 17:50:22,392 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 28828 
+SUCCESS                 : 935 
+FAIL                    : 65
+2020-05-08 18:11:42,141 [INFO] EveryVisit0_FirstVisit1 : 0 
+Total Step              : 12521 
+SUCCESS                 : 937 
+FAIL                    : 63
+2020-05-08 18:27:04,029 [INFO] EveryVisit0_FirstVisit1 : 1 
+Total Step              : 6721 
+SUCCESS                 : 940 
+FAIL                    : 60
+2020-05-08 18:46:48,444 [INFO] EveryVisit0_FirstVisit1 : 1 
+Total Step              : 10949 
+SUCCESS                 : 937 
+FAIL                    : 63
+2020-05-08 19:05:44,830 [INFO] EveryVisit0_FirstVisit1 : 1 
+Total Step              : 10172 
+SUCCESS                 : 963 
+FAIL                    : 37
+2020-05-08 19:21:35,290 [INFO] EveryVisit0_FirstVisit1 : 1 
+Total Step              : 7225 
+SUCCESS                 : 964 
+FAIL                    : 36
+2020-05-08 19:43:02,259 [INFO] EveryVisit0_FirstVisit1 : 1 
+Total Step              : 12570 
+SUCCESS                 : 944 
+FAIL                    : 56
