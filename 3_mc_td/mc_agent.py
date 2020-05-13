@@ -40,16 +40,21 @@ class MCAgent:
         g = 0
         is_visit = []
 
-        for s, r, _ in self.samples[::-1]:
+        store = []
+
+        for s, r, _ in self.samples:
             state_key = f'{s}'
 
             if state_key not in is_visit:
                 is_visit.append(state_key)
 
-                v = self.value_table[state_key]
-                g = r + self.discount_factor * g
+                store.append([state_key, r])
 
-                self.value_table[state_key] = v + self.learning_rate * (g - v)
+        for s, r in store[::-1]:
+            v = self.value_table[s]
+            g = r + self.discount_factor * g
+
+            self.value_table[s] = v + self.learning_rate * (g - v)
 
     # 상태-가치함수에 따라서 행동을 결정
     # 다음 time-step 때 선택할 수 있는 상태들 중에서, 가장 큰 가치함수 값을 리턴하는 상태로 이동
@@ -118,57 +123,55 @@ if __name__ == "__main__":
     visit = [1]
     env = Env()
 
-    for v in visit:
-        for _ in range(0, 5):
-            EveryVisit0_FirstVisit1 = v
+    EveryVisit0_FirstVisit1 = 1
 
-            agent = MCAgent(actions=list(range(env.n_actions)))
-            success_cnt = 0
-            fail_cnt = 0
-            total_step = 0
+    agent = MCAgent(actions=list(range(env.n_actions)))
+    success_cnt = 0
+    fail_cnt = 0
+    total_step = 0
 
-            MAX_EPISODES = 1000  # 최대 에피소드 수
-            for episode in range(MAX_EPISODES):
-                state = env.reset()  # 에피소드 시작 : 환경을 초기화하고, 상태 = 초기상태로 설정
-                action = agent.get_action(state)
+    MAX_EPISODES = 1000  # 최대 에피소드 수
+    for episode in range(MAX_EPISODES):
+        state = env.reset()  # 에피소드 시작 : 환경을 초기화하고, 상태 = 초기상태로 설정
+        action = agent.get_action(state)
 
-                # print('Episode [' + str(episode) + '] begins at state ' + str(state))
+        # print('Episode [' + str(episode) + '] begins at state ' + str(state))
 
-                while True:
-                    env.render()  # 화면 그리기
+        while True:
+            env.render()  # 화면 그리기
 
-                    # action 행동을 하고 다음 상태로 이동
-                    # 보상은 숫자이고, 완료 여부는 boolean
-                    next_state, reward, done = env.step(action)
+            # action 행동을 하고 다음 상태로 이동
+            # 보상은 숫자이고, 완료 여부는 boolean
+            next_state, reward, done = env.step(action)
 
-                    # 획득한 샘플을 샘플 버퍼/메모리에 저장
-                    # 에피소드가 끝나야 리턴값을 알 수 있으므로, done=True 일때까지 버퍼에 보관
-                    agent.save_sample(next_state, reward, done)
+            # 획득한 샘플을 샘플 버퍼/메모리에 저장
+            # 에피소드가 끝나야 리턴값을 알 수 있으므로, done=True 일때까지 버퍼에 보관
+            agent.save_sample(next_state, reward, done)
 
-                    # env.step(action)을 통해 상태가 변경 되었고,
-                    # 변경된 상태에서 택할 행동을 결정
-                    action = agent.get_action(next_state)
+            # env.step(action)을 통해 상태가 변경 되었고,
+            # 변경된 상태에서 택할 행동을 결정
+            action = agent.get_action(next_state)
 
-                    total_step += 1
+            total_step += 1
 
-                    # 에피소드가 완료되었다면, 가치함수 업데이트
-                    if done:
-                        if reward > 0:
-                            success_cnt += 1
-                            print("SUCCESS")
-                        else:
-                            fail_cnt += 1
-                            print("FAIL")
+            # 에피소드가 완료되었다면, 가치함수 업데이트
+            if done:
+                if reward > 0:
+                    success_cnt += 1
+                    print("SUCCESS")
+                else:
+                    fail_cnt += 1
+                    print("FAIL")
 
-                        # print('- Episode finished... now, update the value function')
-                        if EveryVisit0_FirstVisit1 is 0:
-                            agent.update_EveryVisit()
-                        else:
-                            agent.update_FirstVisit()
-                        agent.samples.clear()
-                        break
+                # print('- Episode finished... now, update the value function')
+                if EveryVisit0_FirstVisit1 is 0:
+                    agent.update_EveryVisit()
+                else:
+                    agent.update_FirstVisit()
+                agent.samples.clear()
+                break
 
-            logger.info(f"EveryVisit0_FirstVisit1 : {EveryVisit0_FirstVisit1} \n"
-                        f"Total Step              : {total_step} \n"
-                        f"SUCCESS                 : {success_cnt} \n"
-                        f"FAIL                    : {fail_cnt}")
+    logger.info(f"EveryVisit0_FirstVisit1 : {EveryVisit0_FirstVisit1} \n"
+                f"Total Step              : {total_step} \n"
+                f"SUCCESS                 : {success_cnt} \n"
+                f"FAIL                    : {fail_cnt}")
