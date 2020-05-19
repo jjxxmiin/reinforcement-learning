@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 import random
 from collections import defaultdict
 from env import Env
@@ -11,6 +12,7 @@ class SARSAgent:
         self.learning_rate = 0.01
         self.discount_factor = 0.9
         self.epsilon = 0.1  # 3) 시간이 지날수록 e 값이 감소하도록 코드를 수정하세요.
+        self.epsilon_discount_factor = 0.1 / MAX_EPISODE
         self.q_table = defaultdict(lambda: [0.0, 0.0, 0.0, 0.0])
 
     # 큐함수 업데이트
@@ -64,9 +66,18 @@ if __name__ == "__main__":
     env = Env()  # 환경에 대한 instance 생성
     agent = SARSAgent(actions=list(range(env.n_actions)))  # Sarsa Agent 객체 생성
 
+    success_total_step = 0
+    fail_total_step = 0
+    num_success = 0
+    num_fail = 0
+    step_log = []
+    epsilon_log = []
+
     # 지정된 횟수(MAX_EPISODE)만큼 episode 진행
     for episode in range(MAX_EPISODE):
         # 게임 환경과 상태를 초기화 하고, 상태(state)값 얻기
+        num_step = 0
+
         state = env.reset()
 
         # 현재 상태에서 어떤 행동을 할지 선택
@@ -76,6 +87,8 @@ if __name__ == "__main__":
         while True:
             env.render()
 
+            num_step += 1
+
             next_state, reward, done = env.step(action)
             next_action = agent.get_action(str(next_state))
 
@@ -83,11 +96,38 @@ if __name__ == "__main__":
 
             state = next_state
             action = next_action
+            # action = agent.get_action(str(next_state))
 
             # 모든 큐함수 값을 화면에 표시
             env.print_value_all(agent.q_table)
 
             # episode가 끝났으면 while-loop을 종료
             if done:
+                epsilon_log.append(agent.epsilon)
+                agent.epsilon -= agent.epsilon_discount_factor
+
+                if reward > 0:
+                    num_success += 1
+                    print("success")
+                    success_total_step += num_step
+
+                else:
+                    num_fail += 1
+                    print("fail")
+                    fail_total_step += num_step
+
+                step_log.append(num_step)
                 break
 
+    # print(f"num success : {num_success} \n",
+    #       f"num fail : {num_fail} \n",
+    #       f"success total step : {success_total_step} \n",
+    #       F"fail total step : {fail_total_step} \n")
+
+    with open('pkl/log_epsilon.pkl', 'wb') as f:
+        pickle.dump([step_log,
+                     epsilon_log,
+                     num_success,
+                     num_fail,
+                     success_total_step,
+                     fail_total_step], f)

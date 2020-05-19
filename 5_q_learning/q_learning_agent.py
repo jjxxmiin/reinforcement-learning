@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import pickle
 from env import Env
 from collections import defaultdict
 
@@ -8,7 +9,7 @@ class QLearningAgent:
     def __init__(self, actions):
         # 행동 = [0, 1, 2, 3] 순서대로 상, 하, 좌, 우
         self.actions = actions
-        self.learning_rate = 0.01  # 학습률, 2)번 문제
+        self.learning_rate = 0.1  # 학습률, 2)번 문제
         self.discount_factor = 0.9  # 감가율, 3)번 문제
         self.epsilon = 0.05  # 랜덤 행동을 할 확률
         self.q_table = defaultdict(lambda: [0.0, 0.0, 0.0, 0.0])
@@ -48,14 +49,26 @@ if __name__ == "__main__":
     agent = QLearningAgent(actions=list(range(env.n_actions)))  # Q러닝 Agent 객체 생성
 
     EPISODE_MAX = 1000
+
+    success_total_step = 0
+    fail_total_step = 0
+    num_success = 0
+    num_fail = 0
+    step_log = []
+
     for episode in range(EPISODE_MAX):
         state = env.reset()  # 환경을 초기화 하고, 초기 상태 s 를 얻기.
+
+        num_step = 0
 
         while True:  # 현재 episode가 끝날 때 까지 반복
             env.render()
 
             # 현재 상태에 대한 행동 선택
             action = agent.get_action(str(state))
+
+            num_step += 1
+
             # 행동을 취한 후 다음 상태, 보상 에피소드의 종료여부를 받아옴
             next_state, reward, done = env.step(action)
 
@@ -66,6 +79,24 @@ if __name__ == "__main__":
             # 모든 큐함수를 화면에 표시
             env.print_value_all(agent.q_table)
 
-            if done:  # 현재 에피소드가 끝난경우...
-                break  # while-loop를 탈출
+            if done:
+                if reward > 0:
+                    num_success += 1
+                    print("success")
+                    success_total_step += num_step
+
+                else:
+                    num_fail += 1
+                    print("fail")
+                    fail_total_step += num_step
+
+                step_log.append(num_step)
+                break
+
+    with open(f'{agent.learning_rate}_{agent.discount_factor}.pkl', 'wb') as f:
+        pickle.dump([step_log,
+                     num_success,
+                     num_fail,
+                     success_total_step,
+                     fail_total_step], f)
 
