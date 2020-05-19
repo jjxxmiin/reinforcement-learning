@@ -46,15 +46,16 @@ class QLearningAgent:
 
 if __name__ == "__main__":
     env = Env()  # 환경 객체를 생성
-    agent = QLearningAgent(actions=list(range(env.n_actions)))  # Q러닝 Agent 객체 생성
-
     EPISODE_MAX = 1000
+
+    agent = QLearningAgent(actions=list(range(env.n_actions)))  # Q러닝 Agent 객체 생성
 
     success_total_step = 0
     fail_total_step = 0
     num_success = 0
     num_fail = 0
     step_log = []
+    state_log = []
 
     for episode in range(EPISODE_MAX):
         state = env.reset()  # 환경을 초기화 하고, 초기 상태 s 를 얻기.
@@ -84,19 +85,25 @@ if __name__ == "__main__":
                     num_success += 1
                     print("success")
                     success_total_step += num_step
-
+                    state_log.append(1)
                 else:
                     num_fail += 1
                     print("fail")
                     fail_total_step += num_step
+                    state_log.append(0)
 
                 step_log.append(num_step)
                 break
 
-    with open(f'{agent.learning_rate}_{agent.discount_factor}.pkl', 'wb') as f:
+    # print(f"num success : {num_success} \n",
+    #       f"num fail : {num_fail} \n",
+    #       f"success total step : {success_total_step} \n",
+    #       F"fail total step : {fail_total_step} \n")
+
+    with open(f'./pkl/{agent.learning_rate}_{agent.discount_factor}.pkl', 'wb') as f:
         pickle.dump([step_log,
+                     state_log,
                      num_success,
                      num_fail,
                      success_total_step,
                      fail_total_step], f)
-
